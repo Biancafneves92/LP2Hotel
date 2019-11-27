@@ -1,0 +1,125 @@
+--Create database Hotel
+Use Hotel
+
+CREATE TABLE Quarto (
+cod_quarto int IDENTITY(1,1),
+tipo_quarto varchar (40) not null,
+descricao_quarto varchar (200) not null,
+numero_quarto int not null,
+preco_quarto decimal (10,2) not null,
+
+
+CONSTRAINT pk_quarto PRIMARY KEY  (cod_quarto)
+
+) -- fim quarto 
+
+
+CREATE TABLE Produto (
+cod_produto_servico int IDENTITY(1,1),
+nome_produto varchar (60) not null,
+descricao_produto_servico varchar (250) not null,
+preco_produto_servico decimal (10,2)  not null,
+quantidade_produto_servici decimal(10,2)  not null,
+dia_consumo int not null, 
+mes_consumo varchar (60) not null, 
+ano_consumo int not null, 
+
+CONSTRAINT pk_produto_servico PRIMARY KEY (cod_produto_servico)
+
+) -- fim produti_serviço 
+
+
+
+CREATE TABLE Cliente (
+cod_cliente int IDENTITY(1,1), --pk
+nome_cliente varchar (40) not null,
+sobrenome_cliente varchar (60) not null,
+CPF_cliente int not null,
+RG_Cliente int not null,
+sexo_cliente char not null,
+email_Cliente varchar (60),
+dianascimento_cliente int not null,
+mesnascimento_cliente varchar(60) not null,
+anonascimento_cliente int not null,
+nome_bairro varchar (60) not null,
+nome_pais varchar (60) not null,
+nome_estado varchar(60) not null,
+nome_cidade varchar (60) not null,
+numero_endereco int not null,
+rua_endereco varchar (60) not null,
+cep_endereco int not null,
+tel_cliente int not null,
+
+CONSTRAINT pk_Cliente PRIMARY KEY (cod_cliente)
+
+)-- fim cliente
+
+
+CREATE TABLE HOSPEDAGEM (
+cod_hospedagem int IDENTITY(1,1), 
+dia_entrada int not null,
+dia_saida int not null,
+mes_entrada varchar(60) not null,
+mes_saida varchar(60) not null,
+ano_entrada int not null,
+ano_saida int not null,
+descricao_hospedagem varchar(200) not null,
+cod_cliente int not null,
+preco_hospedagem decimal (10,2) not null,
+
+CONSTRAINT pk_Hospedagem PRIMARY KEY (cod_hospedagem),
+
+CONSTRAINT fk_hpsedagm_cliente FOREIGN KEY (cod_cliente)
+REFERENCES Cliente (cod_cliente)
+
+)-- fim hospedagem 
+
+CREATE TABLE Acompanhante (
+cod_acompanhante int IDENTITY(1,1),
+nome_acompanhante varchar (40) not null,
+sobrenome_acompanhante varchar (60) not null,
+CPF_acompanhante int not null,
+sexo_acompanhante char not null,
+cod_hospedagem int not null,
+dianascimento_acompahante int not null,
+mesnascimento_acompahante varchar(60) not null,
+anonascimento_acompahante int not null,
+rg_acompanhante int not null,
+email_acompanhante varchar (60),
+
+CONSTRAINT pk_acompanhante PRIMARY KEY (cod_acompanhante),
+
+CONSTRAINT fk_acompanhante_hospedagem FOREIGN KEY  (cod_hospedagem)
+REFERENCES Hospedagem (cod_hospedagem)
+
+) -- fim acompanhante
+
+CREATE TABLE Hospedagem_Quarto (
+cod_hospedagem int not null,
+cod_quarto int not null,
+descricao_hospedagem_quarto varchar (100) not null,
+
+CONSTRAINT pk_hospedagem_quarto PRIMARY KEY (cod_hospedagem, cod_quarto),
+
+CONSTRAINT fk_hospedagem_quarto_quarto FOREIGN  KEY (cod_quarto)
+REFERENCES Quarto (cod_quarto),
+
+CONSTRAINT fk_hospedagem_quarto_hospedagem FOREIGN KEY (cod_hospedagem)
+REFERENCES HOSPEDAGEM (cod_hospedagem)
+
+) --fim hospedagem_quarto
+
+CREATE TABLE Hospedagem_produto_servico (
+cod_hospedagem int not null,
+cod_produto_servico int not null,
+descricao_hospedagem_produto varchar (100) not null,
+
+
+CONSTRAINT pk_hospedagem_produto PRIMARY KEY (cod_hospedagem, cod_produto_servico),
+
+CONSTRAINT fk_hospedagem_produto_produto FOREIGN KEY (cod_produto_servico)
+REFERENCES Produto (cod_produto_servico),
+
+CONSTRAINT fk_hospedagem_produto_hospedagem FOREIGN KEY (cod_hospedagem)
+REFERENCES Hospedagem (cod_hospedagem)
+)-- fim hospedagem_produto_servico
