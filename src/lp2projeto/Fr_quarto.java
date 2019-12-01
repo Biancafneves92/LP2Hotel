@@ -1,10 +1,13 @@
 package lp2projeto;
+
 import DAO.QuartoDATA;
 import ModeloBD.QuartoBD;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 public class Fr_quarto extends javax.swing.JFrame {
     
@@ -20,9 +23,31 @@ public class Fr_quarto extends javax.swing.JFrame {
     //private Modelo mod = new Modelo ();
     //public ArrayList<ModeloProjeto> Lista = new ArrayList();
     
-    public Fr_quarto() {
+    public Fr_quarto() throws Exception  {
         initComponents();
+        CargaTabela();
     }
+    
+        public void CargaTabela() throws Exception {    
+        try {
+           DefaultTableModel modelo = (DefaultTableModel) tb_quarto.getModel();
+           modelo.setNumRows(0);  // zera qtde de linhas tabela 
+           modelo.setRowCount(0);
+    
+           for (Quarto TU: QuartoDATA.Consulta()) {
+               modelo.addRow( new Object [] {
+               TU.getCod_quarto(),
+               TU.getTipo_quarto(),
+               TU.getDescricao_quarto(),
+               TU.getNumero_quarto(),
+               TU.getPreco_quarto()
+               });
+               
+           }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(rootPane,"Código Não Localizado","ERRO",1 );
+        }
+    }  // final CargaTabela()
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -41,7 +66,11 @@ public class Fr_quarto extends javax.swing.JFrame {
         lb_quartoPreco = new javax.swing.JLabel();
         tf_quartoPreco = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tb_quarto = new javax.swing.JTable();
+        bt_alterar = new javax.swing.JToggleButton();
+        bt_excluir = new javax.swing.JToggleButton();
+        jLabel2 = new javax.swing.JLabel();
+        tf_idquarto = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -85,7 +114,7 @@ public class Fr_quarto extends javax.swing.JFrame {
 
         lb_quartoPreco.setText("Preço:");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tb_quarto.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -96,7 +125,30 @@ public class Fr_quarto extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        tb_quarto.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tb_quartoMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tb_quarto);
+
+        bt_alterar.setText("Alterar");
+        bt_alterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bt_alterarActionPerformed(evt);
+            }
+        });
+
+        bt_excluir.setText("Excluir");
+        bt_excluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bt_excluirActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("ID:");
+
+        tf_idquarto.setEditable(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -108,12 +160,16 @@ public class Fr_quarto extends javax.swing.JFrame {
                         .addGap(258, 258, 258)
                         .addComponent(bt_quartoMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(44, 44, 44))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(30, 30, 30)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(bt_quartoLimpar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(bt_excluir)
+                                .addGap(53, 53, 53)
+                                .addComponent(bt_alterar)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(bt_quartoSalvar))
                             .addGroup(layout.createSequentialGroup()
@@ -129,7 +185,12 @@ public class Fr_quarto extends javax.swing.JFrame {
                                     .addComponent(tf_quartoPreco)
                                     .addComponent(tf_quartNum, javax.swing.GroupLayout.Alignment.TRAILING)))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 385, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addGap(45, 45, 45)
+                                        .addComponent(tf_idquarto))
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 385, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addGap(24, 24, 24))
         );
@@ -138,7 +199,11 @@ public class Fr_quarto extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addComponent(jLabel1)
-                .addGap(30, 30, 30)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(tf_idquarto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(7, 7, 7)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lb_quartTipo)
                     .addComponent(cb_quartTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -156,10 +221,12 @@ public class Fr_quarto extends javax.swing.JFrame {
                     .addComponent(tf_quartoPreco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(33, 33, 33)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bt_quartoSalvar)
-                    .addComponent(bt_quartoLimpar))
+                    .addComponent(bt_quartoLimpar)
+                    .addComponent(bt_alterar)
+                    .addComponent(bt_excluir))
                 .addGap(69, 69, 69)
                 .addComponent(bt_quartoMenu)
                 .addGap(25, 25, 25))
@@ -192,6 +259,63 @@ public class Fr_quarto extends javax.swing.JFrame {
             LimparCamposQuarto();
         } 
     }//GEN-LAST:event_bt_quartoSalvarActionPerformed
+
+    private void bt_alterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_alterarActionPerformed
+       try{
+            if ((tb_quarto.getSelectedRow()!=-1)&&(!tf_quartNum.getText().trim().isEmpty())){  // se há uma linha selecionada 
+                RegQuarto.setCd_tipoUsuario((int) tb_TipoUsuario.getValueAt(tb_TipoUsuario.getSelectedRow(), 0));
+                RegQuarto.setDs_TipoUsuario(tf_TipoUsuario.getText().trim());
+                if(DAOTipoUsuarioDATA.altera(regTipoUsuario)) {
+                    JOptionPane.showMessageDialog(null,"Quarto Alterado","Mensagem",JOptionPane.PLAIN_MESSAGE);    
+                    ConcultaTabela();
+                } else  {
+                    JOptionPane.showMessageDialog(null,"Não foi Alterar Tipo de Usuário.Verifique Relacionamentos.","ERRO",JOptionPane.ERROR_MESSAGE);
+                }
+
+            } else {
+                JOptionPane.showMessageDialog(null,"Necessário que uma linha esteja no foco.","ERRO",JOptionPane.ERROR_MESSAGE);
+
+            }
+        }  catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Erro:" + ex.getMessage());
+        }
+
+        LimparCamposQuarto();
+    }//GEN-LAST:event_bt_alterarActionPerformed
+
+    private void bt_excluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_excluirActionPerformed
+try{
+            if ((tb_quarto.getSelectedRow()!=-1)){  // se há uma linha selecionada
+               RegQuarto = new Quarto ();
+               RegQuarto.setCod_quarto((int) tb_quarto.getValueAt(tb_quarto.getSelectedRow(), 0));
+               if(QuartoDATA.Apagar(RegQuarto)) {
+                    JOptionPane.showMessageDialog(rootPane,"Registro Excluído com SUCESSO","MENSAGEM",JOptionPane.INFORMATION_MESSAGE );
+                    LimparCamposQuarto();
+                    CargaTabela();
+                } else {
+                    JOptionPane.showMessageDialog(rootPane,"ERRO ao Excluído Registro","ERRO EXCLUIR",JOptionPane.ERROR_MESSAGE );
+                }
+               
+            } else {
+                JOptionPane.showMessageDialog(null,"Necessário que uma linha esteja no foco.","ERRO",JOptionPane.ERROR_MESSAGE);
+            }
+
+        }   catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "ERRO EXCLUIR:" + ex.getMessage());
+        }
+    
+                            
+    }//GEN-LAST:event_bt_excluirActionPerformed
+
+    private void tb_quartoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tb_quartoMouseClicked
+    if (tb_quarto.getSelectedRow()!=-1) {  // se há uma linha selecionada
+        tf_idquarto.setText(tf_idquarto.getValueAt(tf_idquarto.getSelectedRow(),0).toString());
+        cb_quartTipo.setText(cb_quartTipo.getValueAt(cb_quartTipo.getSelectedRow(),1).toString());
+        tf_quartDesc.setText(tf_quartDesc.getValueAt(tf_quartDesc.getSelectedRow(),2).toString());
+        tf_quartNum.setText(tf_quartNum.getValueAt(tf_quartNum.getSelectedRow(),3).toString());
+        tf_quartoPreco.setText(tf_quartoPreco.getValueAt(tf_quartoPreco.getSelectedRow(),4).toString());
+        }  
+    }//GEN-LAST:event_tb_quartoMouseClicked
 
     /**
      * @param args the command line arguments
@@ -229,23 +353,26 @@ public class Fr_quarto extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton bt_alterar;
+    private javax.swing.JToggleButton bt_excluir;
     private javax.swing.JButton bt_quartoLimpar;
     private javax.swing.JButton bt_quartoMenu;
     private javax.swing.JButton bt_quartoSalvar;
     private javax.swing.JComboBox<String> cb_quartTipo;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lb_quartDesc;
     private javax.swing.JLabel lb_quartNum;
     private javax.swing.JLabel lb_quartTipo;
     private javax.swing.JLabel lb_quartoPreco;
+    private javax.swing.JTable tb_quarto;
+    private javax.swing.JTextField tf_idquarto;
     private javax.swing.JTextField tf_quartDesc;
     private javax.swing.JTextField tf_quartNum;
     private javax.swing.JTextField tf_quartoPreco;
     // End of variables declaration//GEN-END:variables
 
-               
 
     public void setModelo() {
        RegQuarto.setTipo_quarto(quartoTipo);

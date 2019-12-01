@@ -43,49 +43,5 @@ public class HospedagemDATA {
         
     }*/
     
-    private void preenchecomboCliente (){
-        
-        cb_hospCliente.removeAllItems();
-        
-        try{
-            
-            con = new Conexao();
-             String SQL = "Select nome_cliente from Cliente ";
-             PreparedStatement ps = con.getConexao().prepareStatement(SQL);
-             ResultSet rs = ps.executeQuery();
-                
-             while(rs.next()){
-                 String name =rs.getString ("Nome");
-                 cb_cliente.addItem(name);
-             }
-        }
-        
-        catch (Exception e){
-           // throw new Exception("Erro ao consultar agenda !");
-        }
-    }
-    
-    private void preenchecomboPet () {
-        
-        cb_NomePet.removeAllItems();
-        
-        try{
-            
-            con = new Conexao();
-             String SQL = "Select nome from MeuPet ";
-             PreparedStatement ps = con.getConexao().prepareStatement(SQL);
-             ResultSet rs = ps.executeQuery();
-                
-             while(rs.next()){
-                 String name =rs.getString ("Nome");
-                 cb_NomePet.addItem(name);
-             }
-        }
-        
-        catch (Exception e){
-            //throw new Exception("Erro ao consultar agenda !");
-        }
-    
-    
-    
+
 }

@@ -1,17 +1,62 @@
 package lp2projeto;
-
+import DAO.Conexao;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import DAO.HospedagemDATA;
 import ModeloBD.HospedagemBD;
-import DAO.ClienteDATA;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 
 public class Fr_hospedagem extends javax.swing.JFrame {
+    
+    Conexao con;
+    
     private HospedagemBD RegHospedagem = new HospedagemBD();
     private HospedagemDATA HospedagemDAO =  new HospedagemDATA ();
     
     public Fr_hospedagem() {
         initComponents();
+        preenchecomboQuarto();
+        preenchecomboCliente();
+    }
+    
+    private void preenchecomboQuarto () {
+        cb_quarto.removeAllItems();
+        try{
+            con = new Conexao();
+             String SQL = "Select tipo_quarto from Quarto ";
+             PreparedStatement ps = con.getConexao().prepareStatement(SQL);
+             ResultSet rs = ps.executeQuery();
+                
+             while(rs.next()){
+                 String name = rs.getString ("tipo_quarto");
+                 cb_quarto.addItem(name);
+             }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            //throw new Exception("Erro ao consultar agenda !");
+        }
+    }
+    
+        private void preenchecomboCliente () {
+        cb_clienteHospedagem.removeAllItems();
+        try{
+            con = new Conexao();
+             String SQL = "Select nome_cliente from Cliente ";
+             PreparedStatement ps = con.getConexao().prepareStatement(SQL);
+             ResultSet rs = ps.executeQuery();
+                
+             while(rs.next()){
+                 String name = rs.getString ("nome_cliente");
+                 cb_clienteHospedagem.addItem(name);
+             }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            //throw new Exception("Erro ao consultar agenda !");
+        }
     }
 
     /**
@@ -38,15 +83,16 @@ public class Fr_hospedagem extends javax.swing.JFrame {
         lb_hospPrecEstadia = new javax.swing.JLabel();
         tf_hospPrecEstadia = new javax.swing.JTextField();
         bt_hospLimpar = new javax.swing.JButton();
-        bt_hospSeleCliente = new javax.swing.JButton();
         bt_hospSalvar = new javax.swing.JButton();
         lb_hospQuarto = new javax.swing.JLabel();
-        tf_hospQuarto = new javax.swing.JTextField();
-        bt_hospSeleQuarto = new javax.swing.JButton();
         bt_hospMenu = new javax.swing.JButton();
-        cb_hospCliente = new javax.swing.JComboBox<>();
+        jButton1 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        cb_quarto = new javax.swing.JComboBox();
+        cb_clienteHospedagem = new javax.swing.JComboBox<>();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         lb_hospedagem.setText("Hospedagem");
         lb_hospedagem.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -86,14 +132,7 @@ public class Fr_hospedagem extends javax.swing.JFrame {
             }
         });
 
-        bt_hospSeleCliente.setText("Selecionar");
-        bt_hospSeleCliente.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bt_hospSeleClienteActionPerformed(evt);
-            }
-        });
-
-        bt_hospSalvar.setText("Incluir");
+        bt_hospSalvar.setText("Registrar");
         bt_hospSalvar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bt_hospSalvarActionPerformed(evt);
@@ -102,13 +141,6 @@ public class Fr_hospedagem extends javax.swing.JFrame {
 
         lb_hospQuarto.setText("Quarto:");
 
-        bt_hospSeleQuarto.setText("Selecionar");
-        bt_hospSeleQuarto.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bt_hospSeleQuartoActionPerformed(evt);
-            }
-        });
-
         bt_hospMenu.setText("Menu Principal");
         bt_hospMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -116,11 +148,25 @@ public class Fr_hospedagem extends javax.swing.JFrame {
             }
         });
 
-        cb_hospCliente.addActionListener(new java.awt.event.ActionListener() {
+        jButton1.setText("Incluir Acompanhante");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cb_hospClienteActionPerformed(evt);
+                jButton1ActionPerformed(evt);
             }
         });
+
+        jLabel1.setText("Deseja incluir um acompanhante ?");
+
+        cb_quarto.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cb_quarto.setSelectedIndex(-1);
+        cb_quarto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cb_quartoActionPerformed(evt);
+            }
+        });
+
+        cb_clienteHospedagem.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cb_clienteHospedagem.setSelectedIndex(-1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -128,48 +174,51 @@ public class Fr_hospedagem extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(34, 34, 34)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lb_hospDtsaida)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addGap(27, 27, 27)
+                            .addComponent(bt_hospMenu)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(bt_hospLimpar)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(298, 298, 298)
-                                .addComponent(bt_hospSalvar)))
+                            .addGap(18, 18, 18)
+                            .addComponent(bt_hospSalvar))
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(lb_hospCliente)
-                                .addComponent(lb_hospDtentrada)
-                                .addComponent(lb_hospDescricao)
-                                .addComponent(lb_hospPrecEstadia)
-                                .addComponent(lb_hospQuarto))
-                            .addGap(41, 41, 41)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(lb_hospDtsaida)
                                 .addGroup(layout.createSequentialGroup()
-                                    .addComponent(cb_hospDtsaida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(cb_hospMesSaida, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(cb_hospAnoSaida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(tf_hospDescricao)
-                                .addComponent(tf_hospPrecEstadia)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(tf_hospQuarto, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(bt_hospSeleQuarto, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(cb_hospCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(bt_hospSeleCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                    .addComponent(cb_hospDtentrada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(cb_hospMesEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(cb_hospAnoEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addComponent(bt_hospMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lb_hospedagem, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(37, Short.MAX_VALUE))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(lb_hospCliente)
+                                        .addComponent(lb_hospDtentrada)
+                                        .addComponent(lb_hospDescricao)
+                                        .addComponent(lb_hospPrecEstadia)
+                                        .addComponent(lb_hospQuarto))
+                                    .addGap(41, 41, 41)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(cb_hospDtsaida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(cb_hospMesSaida, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(cb_hospAnoSaida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(tf_hospDescricao)
+                                        .addComponent(tf_hospPrecEstadia)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                            .addComponent(cb_hospDtentrada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(cb_hospMesEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(cb_hospAnoEntrada, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(cb_quarto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(cb_clienteHospedagem, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(lb_hospedagem, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(80, 80, 80)))
+                    .addComponent(jLabel1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(jButton1)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -179,8 +228,7 @@ public class Fr_hospedagem extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lb_hospCliente)
-                    .addComponent(bt_hospSeleCliente)
-                    .addComponent(cb_hospCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cb_clienteHospedagem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lb_hospDtentrada)
@@ -205,15 +253,19 @@ public class Fr_hospedagem extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lb_hospQuarto)
-                    .addComponent(tf_hospQuarto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bt_hospSeleQuarto))
-                .addGap(35, 35, 35)
+                    .addComponent(cb_quarto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(11, 11, 11)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bt_hospSalvar)
                     .addComponent(bt_hospLimpar)
-                    .addComponent(bt_hospSalvar))
-                .addGap(26, 26, 26)
-                .addComponent(bt_hospMenu)
-                .addContainerGap(30, Short.MAX_VALUE))
+                    .addComponent(bt_hospMenu))
+                .addGap(27, 27, 27))
         );
 
         pack();
@@ -223,10 +275,6 @@ public class Fr_hospedagem extends javax.swing.JFrame {
     LimparCamposHosp();
 // TODO add your handling code here:
     }//GEN-LAST:event_bt_hospLimparActionPerformed
-
-    private void bt_hospSeleClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_hospSeleClienteActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_bt_hospSeleClienteActionPerformed
 
     private void bt_hospSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_hospSalvarActionPerformed
     ConsisteCamposPreenchidos();
@@ -238,10 +286,6 @@ public class Fr_hospedagem extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_bt_hospSalvarActionPerformed
 
-    private void bt_hospSeleQuartoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_hospSeleQuartoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_bt_hospSeleQuartoActionPerformed
-
     private void bt_hospMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_hospMenuActionPerformed
     Fr_menu localMenu = new Fr_menu ();
     localMenu.setVisible(true);
@@ -249,9 +293,14 @@ public class Fr_hospedagem extends javax.swing.JFrame {
     // TODO add your handling code here:
     }//GEN-LAST:event_bt_hospMenuActionPerformed
 
-    private void cb_hospClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_hospClienteActionPerformed
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+      Fr_acompanhante a = new Fr_acompanhante ();
+      a.setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void cb_quartoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_quartoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_cb_hospClienteActionPerformed
+    }//GEN-LAST:event_cb_quartoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -280,6 +329,8 @@ public class Fr_hospedagem extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -293,15 +344,17 @@ public class Fr_hospedagem extends javax.swing.JFrame {
     private javax.swing.JButton bt_hospLimpar;
     private javax.swing.JButton bt_hospMenu;
     private javax.swing.JButton bt_hospSalvar;
-    private javax.swing.JButton bt_hospSeleCliente;
-    private javax.swing.JButton bt_hospSeleQuarto;
+    private javax.swing.JComboBox<String> cb_clienteHospedagem;
     private javax.swing.JComboBox<String> cb_hospAnoEntrada;
     private javax.swing.JComboBox<String> cb_hospAnoSaida;
-    private javax.swing.JComboBox<String> cb_hospCliente;
     private javax.swing.JComboBox<String> cb_hospDtentrada;
     private javax.swing.JComboBox<String> cb_hospDtsaida;
     private javax.swing.JComboBox<String> cb_hospMesEntrada;
     private javax.swing.JComboBox<String> cb_hospMesSaida;
+    private javax.swing.JComboBox cb_quarto;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lb_hospCliente;
     private javax.swing.JLabel lb_hospDescricao;
     private javax.swing.JLabel lb_hospDtentrada;
@@ -311,7 +364,6 @@ public class Fr_hospedagem extends javax.swing.JFrame {
     private javax.swing.JLabel lb_hospedagem;
     private javax.swing.JTextField tf_hospDescricao;
     private javax.swing.JTextField tf_hospPrecEstadia;
-    private javax.swing.JTextField tf_hospQuarto;
     // End of variables declaration//GEN-END:variables
 
     private String hospCliente;
@@ -330,7 +382,6 @@ public class Fr_hospedagem extends javax.swing.JFrame {
     //public ArrayList<ModeloProjeto> Lista = new ArrayList();
     
 private void LimparCamposHosp(){
-    cb_hospCliente.setSelectedIndex(-1);
     tf_hospDescricao.setText(null);
     tf_hospPrecEstadia.setText(null);
     cb_hospAnoEntrada.setSelectedIndex(-1);
@@ -339,7 +390,7 @@ private void LimparCamposHosp(){
     cb_hospDtsaida.setSelectedIndex(-1);
     cb_hospMesEntrada.setSelectedIndex(-1);
     cb_hospMesSaida.setSelectedIndex(-1);
-    tf_hospQuarto.setText(null);
+    cb_quarto.setSelectedIndex(-1);
 }
 
 public void setModelo() {
@@ -352,7 +403,6 @@ public void setModelo() {
     RegHospedagem.setAno_saida(hospAnoSaida);
     RegHospedagem.setDescricao_hospedagem(hospDescricao);
     RegHospedagem.setPreco_hospedagem(hospPrecEstadia);
-    RegHospedagem.setNome_Cliente(hospCliente);
 }
     
 private void GravaDados(){
@@ -390,15 +440,15 @@ private void GravaDados(){
     
     
     public void ConsisteCamposPreenchidos() {
-    if (cb_hospCliente.getSelectedIndex()==-1) {
-        JOptionPane.showMessageDialog(null, "Nome do cliente não preenchido","Erro",JOptionPane.ERROR_MESSAGE);
-    }
+    /*if (tf_hospCliente.getText().trim().isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Preencha o Nome do cliente!","Erro",JOptionPane.ERROR_MESSAGE);
+    }*/
     if(tf_hospPrecEstadia.getText().trim().isEmpty()) {
      JOptionPane.showMessageDialog(null, "Preencha o preço da estadia!","Erro",JOptionPane.ERROR_MESSAGE);   
     }
-    if(tf_hospQuarto.getText().trim().isEmpty()) {
+    /*if(tf_hospQuarto.getText().trim().isEmpty()) {
      JOptionPane.showMessageDialog(null, "Preencha o quarto da estadia!","Erro",JOptionPane.ERROR_MESSAGE);   
-    }
+    }*/
     if(cb_hospAnoEntrada.getSelectedIndex()==-1) {
         JOptionPane.showMessageDialog(null, "Selecione o ano de entrada","Erro",JOptionPane.ERROR_MESSAGE);
     }
@@ -417,10 +467,8 @@ private void GravaDados(){
     if(cb_hospMesSaida.getSelectedIndex()==-1) {
         JOptionPane.showMessageDialog(null, "Selecione o mês de saída","Erro",JOptionPane.ERROR_MESSAGE);
     }
-    }
-   
-}    
     
-    
+}
 
 
+}

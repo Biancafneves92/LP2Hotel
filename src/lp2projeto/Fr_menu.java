@@ -32,6 +32,11 @@ public class Fr_menu extends javax.swing.JFrame {
         jMenuBar2 = new javax.swing.JMenuBar();
         jMenu3 = new javax.swing.JMenu();
         jMenu4 = new javax.swing.JMenu();
+        jLabel1 = new javax.swing.JLabel();
+        bt_reserva = new javax.swing.JButton();
+        bt_cliente = new javax.swing.JButton();
+        bt_produto = new javax.swing.JButton();
+        lb_imagem = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -49,6 +54,37 @@ public class Fr_menu extends javax.swing.JFrame {
         jMenuBar2.add(jMenu4);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel1.setText("jLabel1");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 180, -1, -1));
+
+        bt_reserva.setText("Hospedagem");
+        bt_reserva.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bt_reservaActionPerformed(evt);
+            }
+        });
+        getContentPane().add(bt_reserva, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 490, 120, -1));
+
+        bt_cliente.setText("Cliente");
+        bt_cliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bt_clienteActionPerformed(evt);
+            }
+        });
+        getContentPane().add(bt_cliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 490, 90, -1));
+
+        bt_produto.setText("Produtos & Serviços");
+        bt_produto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bt_produtoActionPerformed(evt);
+            }
+        });
+        getContentPane().add(bt_produto, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 490, -1, -1));
+
+        lb_imagem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/imagem-do-hotel.png"))); // NOI18N
+        getContentPane().add(lb_imagem, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 800, 559));
 
         jMenu1.setText("Arquivo");
         jMenuBar1.add(jMenu1);
@@ -102,17 +138,6 @@ public class Fr_menu extends javax.swing.JFrame {
 
         setJMenuBar(jMenuBar1);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1029, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 559, Short.MAX_VALUE)
-        );
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -151,6 +176,24 @@ public class Fr_menu extends javax.swing.JFrame {
     // TODO add your handling code here:
     }//GEN-LAST:event_jMenuQuartoActionPerformed
 
+    private void bt_clienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_clienteActionPerformed
+        Fr_cliente c = new Fr_cliente();
+        c.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_bt_clienteActionPerformed
+
+    private void bt_reservaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_reservaActionPerformed
+        Fr_hospedagem h = new Fr_hospedagem();
+        h.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_bt_reservaActionPerformed
+
+    private void bt_produtoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_produtoActionPerformed
+        Fr_produto p = new Fr_produto();
+        p.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_bt_produtoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -178,6 +221,8 @@ public class Fr_menu extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -188,6 +233,10 @@ public class Fr_menu extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bt_cliente;
+    private javax.swing.JButton bt_produto;
+    private javax.swing.JButton bt_reserva;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
@@ -200,5 +249,8 @@ public class Fr_menu extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuHospedagem;
     private javax.swing.JMenuItem jMenuProdSer;
     private javax.swing.JMenuItem jMenuQuarto;
+    private javax.swing.JLabel lb_imagem;
     // End of variables declaration//GEN-END:variables
+
+    
 }

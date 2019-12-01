@@ -45,9 +45,9 @@ public class ClienteDATA {
   public boolean Alterar (ClienteBD Cliente) throws Exception{
         boolean retorno=false;
         con = new Conexao();
-        String SQL = "update Cliente set (nome_cliente = ?, sobrenome_cliente = ?, CPF_cliente = ?, RG_Cliente = ?, sexo_cliente = ?, email_Cliente = ?, "
-                + "dianascimento_cliente = ?, mesnascimento_cliente = ?, anonascimento_cliente = ?, nome_bairro = ?, nome_pais = ?, nome_estado = ?, "
-                + "nome_cidade = ?, numero_endereco = ?, rua_endereco = ?,cep_endereco = ?, tel_cliente = ?) where cod_cliente = ?";
+        String SQL = "update into Cliente(nome_cliente, sobrenome_cliente, CPF_cliente, RG_Cliente, sexo_cliente, email_Cliente, "
+                + "dianascimento_cliente, mesnascimento_cliente, anonascimento_cliente, nome_bairro, nome_pais, nome_estado, "
+                + "nome_cidade, numero_endereco, rua_endereco,cep_endereco, tel_cliente) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
          
         PreparedStatement ps = con.getConexao().prepareStatement(SQL);
         ps.setString(1,Cliente.getNome_cliente());
@@ -73,9 +73,7 @@ public class ClienteDATA {
         return retorno;
     }
   
-
-  
-  /*/public boolean Excluir (ClienteBD Cliente) throws Exception{
+   /*/public boolean Excluir (ClienteBD Cliente) throws Exception{
         boolean retorno=false;
         con = new Conexao();
         String SQL = "delete into Cliente where nome_cliente = (nomeCliente)
@@ -108,5 +106,4 @@ public class ClienteDATA {
         }
         return retorno;
     }*/
-
 }
